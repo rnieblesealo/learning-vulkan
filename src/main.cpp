@@ -1,7 +1,4 @@
 #include <GLFW/glfw3.h>
-#include <cstdint>
-#include <gsl/gsl>
-#include <iostream>
 
 #include "glfw-initialization.h"
 

@@ -60,3 +60,9 @@ target_link_libraries(VulkanEngine PRIVATE
 
 # C++20 for VulkanEngine target 
 target_compile_features(VulkanEngine PRIVATE cxx_std_20)
+
+# Precompile the includes in precomp.h
+# This means they get compiled once in one build and never again
+# Speeds up compilation times!
+# Also doesn't require us to explicitly #include stuff again
+target_precompile_headers(VulkanEngine PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/precomp.h")
