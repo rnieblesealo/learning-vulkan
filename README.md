@@ -37,5 +37,14 @@ span.begin(); // Span supports iterator use
 span.end();
 
 gsl::not_null notNull; // Pointer that can't be null; crashes program if it is
+```
 
+## Vulkan
+
+- Inverted Y coord system (+X towards right, +Y towards bottom)
+- **Monitor Logical Pos:**
+```txt
+[1][2]
+
+If monitor 1's lower right has pos (1920, 1080), then monitor 2's top left is (1920, 0)
 ```

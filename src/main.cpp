@@ -21,6 +21,15 @@ std::int32_t main(std::int32_t argc, gsl::zstring *argv)
   // final_action runs the passed func when destructor (of window) is reached
   gsl::final_action _cleanup_window([window] { glfwDestroyWindow(window); });
 
+  std::int32_t             monitor_count(0);
+  gsl::span<GLFWmonitor *> monitors(glfwGetMonitors(&monitor_count), monitor_count);
+
+  glm::ivec2 main_monitor_logical_pos;
+  glfwGetMonitorPos(
+      monitors[0], &main_monitor_logical_pos.x, &main_monitor_logical_pos.y); // Get main monitor
+  glfwSetWindowPos(
+      window, main_monitor_logical_pos.x, main_monitor_logical_pos.y); // Move window to its pos
+
   while (!glfwWindowShouldClose(window))
   {
     glfwPollEvents(); // Need this for window to show
