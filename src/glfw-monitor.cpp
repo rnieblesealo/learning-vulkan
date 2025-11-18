@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 
 #include "glfw-monitor.h"
+#include "glfw-window.h"
 
 namespace veng
 {
@@ -31,21 +32,15 @@ glm::ivec2 GetMonitorWorkAreaSize(gsl::not_null<GLFWmonitor *> monitor)
   return monitor_size;
 }
 
-glm::ivec2 GetWindowSize(gsl::not_null<GLFWwindow *> window)
+void MoveWindowToMonitor(gsl::not_null<GLFWwindow *> window, gsl::not_null<GLFWmonitor *> monitor)
 {
   glm::ivec2 window_size;
 
-  glfwGetWindowSize(window, &window_size.x, &window_size.y); // Get window size
+  glfwGetWindowSize(window, &window_size.x, &window_size.y);
 
-  return window_size;
-}
-
-void MoveWindowToMonitor(gsl::not_null<GLFWwindow *> window, gsl::not_null<GLFWmonitor *> monitor)
-{
   // Put window at center
   glm::vec2 new_window_pos = veng::GetMonitorPosition(monitor) +
-                             (veng::GetMonitorWorkAreaSize(monitor) / 2) -
-                             (veng::GetWindowSize(window) / 2);
+                             (veng::GetMonitorWorkAreaSize(monitor) / 2) - (window_size / 2);
 
   glfwSetWindowPos(window, new_window_pos.x, new_window_pos.y);
 }

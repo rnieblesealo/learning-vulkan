@@ -31,6 +31,11 @@ These are my notes I took while following along!
     - Circular deps (Header A includes header B, and header B also includes header A)
         - These can lead to compilation errors; avoid them completely!
 - Use forward declarations any time you don't need the complete type def, as a general rule
+- `const` on function declaration:
+    - Can call on const instances of class
+    - Function promises not to modify class member variables
+- Compiler needs full type definition to create a reference
+> i.e. If we try to pass something as a const &, we need to `#include` it first...
 
 ### GSL
 Some examples:
