@@ -36,6 +36,8 @@ These are my notes I took while following along!
     - Function promises not to modify class member variables
 - Compiler needs full type definition to create a reference
 > i.e. If we try to pass something as a const &, we need to `#include` it first...
+- It's good practice to add precompiled headerfile to all `.cpp`
+    - If we try to compile on other platform and something fails, we know where to look!
 
 ### GSL
 Some examples:

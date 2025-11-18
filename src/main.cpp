@@ -2,6 +2,7 @@
 
 #include "glfw-initialization.h"
 #include "glfw-window.h"
+#include "precomp.h"
 
 namespace
 {

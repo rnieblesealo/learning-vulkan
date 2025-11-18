@@ -2,6 +2,7 @@
 
 #include "glfw-monitor.h"
 #include "glfw-window.h"
+#include "precomp.h"
 
 namespace veng
 {
