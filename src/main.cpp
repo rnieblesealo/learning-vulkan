@@ -1,11 +1,12 @@
 #include <GLFW/glfw3.h>
 
 #include "glfw-initialization.h"
+#include "glfw-monitor.h"
 
 namespace
 {
-uint32_t SCREEN_WIDTH  = 500;
-uint32_t SCREEN_HEIGHT = 500;
+const uint32_t WINDOW_WIDTH  = 500;
+const uint32_t WINDOW_HEIGHT = 500;
 } // namespace
 
 std::int32_t main(std::int32_t argc, gsl::zstring *argv)
@@ -15,21 +16,23 @@ std::int32_t main(std::int32_t argc, gsl::zstring *argv)
 
   // Create window
   gsl::not_null<GLFWwindow *> window =
-      glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Vulkan Engine", nullptr, nullptr);
+      glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Engine", nullptr, nullptr);
 
   // Capture window var by value; lambda func
   // final_action runs the passed func when destructor (of window) is reached
   gsl::final_action _cleanup_window([window] { glfwDestroyWindow(window); });
 
-  std::int32_t             monitor_count(0);
-  gsl::span<GLFWmonitor *> monitors(glfwGetMonitors(&monitor_count), monitor_count);
+  // Get main monitor
+  gsl::span<GLFWmonitor *> monitors = veng::GetMonitors();
 
-  glm::ivec2 main_monitor_logical_pos;
-  glfwGetMonitorPos(
-      monitors[0], &main_monitor_logical_pos.x, &main_monitor_logical_pos.y); // Get main monitor
-  glfwSetWindowPos(
-      window, main_monitor_logical_pos.x, main_monitor_logical_pos.y); // Move window to its pos
+  // If more than 1 monitor, ensure our window is at center of main monitor
+  if (monitors.size() > 1)
+  {
+    // Move window to center of it
+    veng::MoveWindowToMonitor(window, monitors[0]);
+  }
 
+  // Main loop
   while (!glfwWindowShouldClose(window))
   {
     glfwPollEvents(); // Need this for window to show

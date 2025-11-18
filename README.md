@@ -26,6 +26,12 @@ These are my notes I took while following along!
 
 ## C++
 
+### Language Stuff
+- Forward declarations avoid:
+    - Circular deps (Header A includes header B, and header B also includes header A)
+        - These can lead to compilation errors; avoid them completely!
+- Use forward declarations any time you don't need the complete type def, as a general rule
+
 ### GSL
 Some examples:
 
@@ -48,3 +54,4 @@ gsl::not_null notNull; // Pointer that can't be null; crashes program if it is
 
 If monitor 1's lower right has pos (1920, 1080), then monitor 2's top left is (1920, 0)
 ```
+- The monitor "work area" refers to the desktop's area minus taskbar, menu bar, etc.
