@@ -35,9 +35,8 @@ void veng::Graphics::CreateInstance()
   // Get extensions
   std::vector<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
 
-  suggested_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-
   // Add extension required by MoltenVK
+  suggested_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
   instance_creation_info.enabledExtensionCount   = suggested_extensions.size();
   instance_creation_info.ppEnabledExtensionNames = suggested_extensions.data();
