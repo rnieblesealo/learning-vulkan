@@ -70,3 +70,8 @@ If monitor 1's lower right has pos (1920, 1080), then monitor 2's top left is (1
 ```
 - The monitor "work area" refers to the desktop's area minus taskbar, menu bar, etc.
 - **Extensions** extend the base Vulkan API's capabilities
+
+
+## VS Code
+- `tasks.json` to configure command tasks
+- To debug CMake project, do command palette and then `CMake > Debug`

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include "glfw-window.h"
 
-class Window;
+#include <vulkan/vulkan.h>
 
 namespace veng
 {
