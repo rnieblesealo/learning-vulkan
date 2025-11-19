@@ -32,10 +32,19 @@ void veng::Graphics::CreateInstance()
   instance_creation_info.pNext            = nullptr;
   instance_creation_info.pApplicationInfo = &app_info;
 
-  gsl::span<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
+  // Get extensions
+  std::vector<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
+
+  suggested_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+
+  // Add extension required by MoltenVK
 
   instance_creation_info.enabledExtensionCount   = suggested_extensions.size();
   instance_creation_info.ppEnabledExtensionNames = suggested_extensions.data();
+
+  // Set flag required by macOS MoltenVK
+  instance_creation_info.flags =
+      VkInstanceCreateFlagBits::VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 
   instance_creation_info.enabledLayerCount = 0;
 
@@ -47,14 +56,21 @@ void veng::Graphics::CreateInstance()
   }
 }
 
-gsl::span<gsl::czstring> veng::Graphics::GetSuggestedExtensions()
+std::vector<gsl::czstring> veng::Graphics::GetSuggestedExtensions()
 {
-  // Extend the Vulkan API with GLFW
-
+  // Get GLFW extensions
   std::uint32_t  glfw_extension_count(0);
   gsl::czstring *glfw_extensions;
 
   glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
-  return {glfw_extensions, glfw_extension_count};
+  // Return as vector so we can add more extensions if needed
+  std::vector<gsl::czstring> res;
+
+  for (gsl::czstring *ext; ext != nullptr; ++ext)
+  {
+    res.push_back(gsl::czstring(ext));
+  }
+
+  return res;
 }

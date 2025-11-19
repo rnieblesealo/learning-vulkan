@@ -12,9 +12,9 @@ public:
   Graphics(gsl::not_null<Window *> window);
   ~Graphics();
 
-  void                     InitializeVulkan();
-  void                     CreateInstance();
-  gsl::span<gsl::czstring> GetSuggestedExtensions();
+  void                       InitializeVulkan();
+  void                       CreateInstance();
+  std::vector<gsl::czstring> GetSuggestedExtensions();
 
 private:
   VkInstance              _instance;
