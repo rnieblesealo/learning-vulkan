@@ -8,7 +8,11 @@ namespace veng
 {
 Window::Window(std::string name, glm::ivec2 size)
 {
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Don't guess the client's API
+
   _window = glfwCreateWindow(size.x, size.y, name.c_str(), nullptr, nullptr);
+
   if (_window == nullptr)
   {
     std::exit(EXIT_FAILURE);

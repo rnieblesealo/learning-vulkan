@@ -38,6 +38,7 @@ These are my notes I took while following along!
 > i.e. If we try to pass something as a const &, we need to `#include` it first...
 - It's good practice to add precompiled headerfile to all `.cpp`
     - If we try to compile on other platform and something fails, we know where to look!
+- Brace-initializing with empty braces `= {}` zeroes out all members of struct/class
 
 ### GSL
 Some examples:
@@ -52,6 +53,12 @@ span.end();
 gsl::not_null notNull; // Pointer that can't be null; crashes program if it is
 ```
 
+- `czstring` is a C-style null-terminated string
+
+## GLFW
+- By default, windows expect to be drawn to via OpenGL
+    - We must tell it to not expect it via `glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)`
+
 ## Vulkan
 
 - Inverted Y coord system (+X towards right, +Y towards bottom)
@@ -62,3 +69,4 @@ gsl::not_null notNull; // Pointer that can't be null; crashes program if it is
 If monitor 1's lower right has pos (1920, 1080), then monitor 2's top left is (1920, 0)
 ```
 - The monitor "work area" refers to the desktop's area minus taskbar, menu bar, etc.
+- **Extensions** extend the base Vulkan API's capabilities

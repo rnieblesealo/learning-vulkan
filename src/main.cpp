@@ -2,6 +2,7 @@
 
 #include "glfw-initialization.h"
 #include "glfw-window.h"
+#include "graphics.h"
 #include "precomp.h"
 
 namespace
@@ -20,6 +21,9 @@ std::int32_t main(std::int32_t argc, gsl::zstring *argv)
 
   // Move window to first monitor
   window.TryMoveToMonitor(0);
+
+  // Initialize graphics engine
+  veng::Graphics graphics(&window);
 
   // Main loop
   while (!window.ShouldClose())
