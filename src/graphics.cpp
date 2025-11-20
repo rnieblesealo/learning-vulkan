@@ -9,7 +9,13 @@ veng::Graphics::Graphics(gsl::not_null<Window *> window)
   InitializeVulkan();
 }
 
-veng::Graphics::~Graphics() {}
+veng::Graphics::~Graphics()
+{
+  if (_instance != nullptr)
+  {
+    vkDestroyInstance(_instance, nullptr);
+  }
+}
 
 void veng::Graphics::InitializeVulkan() { CreateInstance(); }
 

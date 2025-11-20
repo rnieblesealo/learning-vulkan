@@ -17,7 +17,7 @@ public:
   std::vector<gsl::czstring> GetSuggestedExtensions();
 
 private:
-  VkInstance              _instance;
+  VkInstance              _instance = nullptr;
   gsl::not_null<Window *> _window; // Our own window class!
 };
 } // namespace veng
