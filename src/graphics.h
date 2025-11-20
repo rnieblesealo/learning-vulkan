@@ -17,6 +17,8 @@ public:
   static std::vector<gsl::czstring>         GetSuggestedInstanceExtensions();
   static std::vector<VkExtensionProperties> GetSupportedInstanceExtensions();
   static bool AllExtensionsSupported(gsl::span<gsl::czstring> extensions);
+  static bool ExtensionMatchesName(gsl::czstring name, VkExtensionProperties const &properties);
+  static bool IsExtensionSupported(gsl::span<VkExtensionProperties> extensions, gsl::czstring name);
 
 private:
   VkInstance              _instance = nullptr;

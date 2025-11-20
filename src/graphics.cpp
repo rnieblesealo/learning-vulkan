@@ -108,14 +108,20 @@ bool veng::Graphics::AllExtensionsSupported(gsl::span<gsl::czstring> extensions)
 {
   std::vector<VkExtensionProperties> supported_extensions = GetSupportedInstanceExtensions();
 
-  // Make sure they are all supported
-  auto is_extension_supported = [&supported_extensions](gsl::czstring name)
-  {
-    return std::any_of(supported_extensions.begin(),
-                       supported_extensions.end(),
-                       [name](VkExtensionProperties const &property)
-                       { return streq(property.extensionName, name); });
-  };
+  return std::all_of(extensions.begin(),
+                     extensions.end(),
+                     std::bind_front(IsExtensionSupported, supported_extensions));
+}
 
-  return std::all_of(extensions.begin(), extensions.end(), is_extension_supported);
+bool veng::Graphics::ExtensionMatchesName(gsl::czstring                name,
+                                          VkExtensionProperties const &properties)
+{
+  return veng::streq(properties.extensionName, name);
+}
+
+bool veng::Graphics::IsExtensionSupported(gsl::span<VkExtensionProperties> extensions,
+                                          gsl::czstring                    name)
+{
+  return std::any_of(
+      extensions.begin(), extensions.end(), std::bind_front(ExtensionMatchesName, name));
 }

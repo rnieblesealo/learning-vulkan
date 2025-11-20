@@ -65,6 +65,8 @@ auto my_lambda = [&list](std::uint32_t n){
 - `std::any_of` returns true if any element in given list satisfies a predicate
 - `std::all_of` returns true if all elements in a given list satisfy the predicate
 > When using **sequence operations** like these, we typically have to pass the sequence via its `.begin()` and `.end()`
+- `std::bind_front(<function>, <param>)` returns a callable object that binds arguments to a function
+    - This allows us to reduce argument count
 
 ### The `Graphics::Graphics` Issue I Died With
 
