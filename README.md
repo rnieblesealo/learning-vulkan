@@ -42,6 +42,13 @@ If you see swearing (unprofessional) just know it helps me cope with the dread t
 - It's good practice to add precompiled headerfile to all `.cpp`
     - If we try to compile on other platform and something fails, we know where to look!
 - Brace-initializing with empty braces `= {}` zeroes out all members of struct/class
+- You can turn a `char**` to a vector of strings like this:
+```cpp
+char    **string_arr    = ...;
+size_t  string_arr_len  = ...;
+std::vector<std::string>(string_arr, string_arr + string_arr_len);
+```
+> If you get confused remember a `char**` just points to a `char*` and go from there :) 
 
 ### The `Graphics::Graphics` Issue I Died With
 
@@ -99,6 +106,9 @@ This requires us toI'm going to use this at my future job, so I better learn it!
 
 Note that as of writing this, all I was able to fix was `glfwVulkanSupported()` which now returns `GLFW_TRUE` whereas before it didn't; however, the more noteworthy issue is that `glfwGetRequiredInstanceExtensions()` still returns nothing...
 
+**Update:** The above was due to a logic error when handling extensions. It was fixed by keeping them in an `std::vector`.
+
+> **Side Note:** If you're struggling to do something that seems very common, put all your efforts into finding the easiest way to do it!
 
 ## VS Code
 
