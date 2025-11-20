@@ -4,11 +4,45 @@ project(VulkanEngine)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-# Get VK install
+# ==================================================================================================
+# ADDING SOURCES
+# ==================================================================================================
+
+# Add any files in src/ to the final binary 
+# CONFIGURE_DEPENDS = If any files change, rerun config step for target(s)
+file(GLOB_RECURSE VulkanEngineSources CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
+)
+
+add_executable(VulkanEngine
+    "${VulkanEngineSources}"
+)
+
+# ==================================================================================================
+# ADDING LIBRARIES 
+# ==================================================================================================
+
 find_package(Vulkan REQUIRED)
 
 # Include FetchContent extension module
 include(FetchContent)
+
+# Use system install of GLFW for macOS since it is compiled correctly for this platform
+# I am not sure how to use FetchContent to compile it such that it works on Mac :(
+# Derived this from: https://github.com/glfw/glfw/issues/1248
+if(APPLE)
+    find_package(glfw3 3.4 REQUIRED)
+else()
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY "https://github.com/glfw/glfw"
+        GIT_TAG "3.4"
+        GIT_SHALLOW TRUE
+    )
+
+    FetchContent_MakeAvailable(glfw)
+endif()
 
 # Declare a new dependency (GLM)
 FetchContent_Declare(
@@ -22,15 +56,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY "https://github.com/glfw/glfw"
-    GIT_TAG "3.4"
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(glfw)
-
-FetchContent_Declare(
     microsoft-gsl
     GIT_REPOSITORY "https://github.com/microsoft/GSL"
     GIT_TAG "v4.2.0"
@@ -39,22 +64,10 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(microsoft-gsl)
 
-# Add any files in src/ to the final binary 
-# CONFIGURE_DEPENDS = If any files change, rerun config step for target(s)
-file(GLOB_RECURSE VulkanEngineSources CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-)
-
-add_executable(VulkanEngine
-    "${VulkanEngineSources}"
-)
-
-# Link VK
 target_link_libraries(VulkanEngine PRIVATE
     "Vulkan::Vulkan"
-    glm
     glfw
+    glm
     Microsoft.GSL::GSL 
 )
 

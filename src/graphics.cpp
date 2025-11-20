@@ -35,6 +35,8 @@ void veng::Graphics::CreateInstance()
   // Get extensions
   std::vector<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
 
+  bool vksp = glfwVulkanSupported() == GLFW_TRUE;
+
   // Add extension required by MoltenVK
   suggested_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
