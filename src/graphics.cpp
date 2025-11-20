@@ -28,24 +28,24 @@ void veng::Graphics::CreateInstance()
 
   VkInstanceCreateInfo instance_creation_info{};
 
-  instance_creation_info.sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  instance_creation_info.pNext            = nullptr;
-  instance_creation_info.pApplicationInfo = &app_info;
+  instance_creation_info.sType             = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+  instance_creation_info.pNext             = nullptr;
+  instance_creation_info.pApplicationInfo  = &app_info;
+  instance_creation_info.enabledLayerCount = 0;
 
-  // Get extensions
+  // Get extensions, add them
   std::vector<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
-
-  // Add extension required by MoltenVK
-  suggested_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
   instance_creation_info.enabledExtensionCount   = suggested_extensions.size();
   instance_creation_info.ppEnabledExtensionNames = suggested_extensions.data();
 
-  // Set flag required by macOS MoltenVK
+// Set flag required by macOS MoltenVK
+#if defined(__APPLE__)
   instance_creation_info.flags =
       VkInstanceCreateFlagBits::VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-
-  instance_creation_info.enabledLayerCount = 0;
+#else
+  instance_creation_info.flags = nullptr;
+#endif
 
   VkResult result = vkCreateInstance(&instance_creation_info, nullptr, &_instance);
 
@@ -57,19 +57,19 @@ void veng::Graphics::CreateInstance()
 
 std::vector<gsl::czstring> veng::Graphics::GetSuggestedExtensions()
 {
-  // Get GLFW extensions
-  std::uint32_t  glfw_extension_count(0);
-  gsl::czstring *glfw_extensions;
+  // Get GLFW extensions first
+  std::uint32_t  glfw_ext_count(0);
+  gsl::czstring *glfw_exts = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
 
-  glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
+  glfw_exts = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
 
-  // Return as vector so we can add more extensions if needed
-  std::vector<gsl::czstring> res;
+  // Vectorize so we can add more
+  std::vector<gsl::czstring> exts(glfw_exts, glfw_exts + glfw_ext_count);
 
-  for (gsl::czstring *ext; ext != nullptr; ++ext)
-  {
-    res.push_back(gsl::czstring(ext));
-  }
+// Add compatibility required by MoltenVK
+#if defined(__APPLE__)
+  exts.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+#endif
 
-  return res;
+  return exts;
 }
