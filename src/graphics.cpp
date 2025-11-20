@@ -2,6 +2,7 @@
 
 #include "graphics.h"
 #include "precomp.h"
+#include "utilities.h"
 
 veng::Graphics::Graphics(gsl::not_null<Window *> window)
     : _window(window)
@@ -39,8 +40,13 @@ void veng::Graphics::CreateInstance()
   instance_creation_info.pApplicationInfo  = &app_info;
   instance_creation_info.enabledLayerCount = 0;
 
-  // Get extensions, add them
-  std::vector<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
+  // Add extensions
+  std::vector<gsl::czstring> suggested_extensions = GetSuggestedInstanceExtensions();
+
+  if (!AllExtensionsSupported(suggested_extensions))
+  {
+    std::exit(EXIT_FAILURE);
+  }
 
   instance_creation_info.enabledExtensionCount   = suggested_extensions.size();
   instance_creation_info.ppEnabledExtensionNames = suggested_extensions.data();
@@ -61,7 +67,7 @@ void veng::Graphics::CreateInstance()
   }
 }
 
-std::vector<gsl::czstring> veng::Graphics::GetSuggestedExtensions()
+std::vector<gsl::czstring> veng::Graphics::GetSuggestedInstanceExtensions()
 {
   // Get GLFW extensions first
   std::uint32_t  glfw_ext_count(0);
@@ -78,4 +84,38 @@ std::vector<gsl::czstring> veng::Graphics::GetSuggestedExtensions()
 #endif
 
   return exts;
+}
+
+std::vector<VkExtensionProperties> veng::Graphics::GetSupportedInstanceExtensions()
+{
+  // Pull extension count first
+  std::uint32_t ext_count = 0;
+  vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, nullptr);
+
+  if (ext_count == 0)
+  {
+    return {};
+  }
+
+  // If any exist return them
+  std::vector<VkExtensionProperties> supported_exts(ext_count);
+  vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, supported_exts.data());
+
+  return supported_exts;
+}
+
+bool veng::Graphics::AllExtensionsSupported(gsl::span<gsl::czstring> extensions)
+{
+  std::vector<VkExtensionProperties> supported_extensions = GetSupportedInstanceExtensions();
+
+  // Make sure they are all supported
+  auto is_extension_supported = [&supported_extensions](gsl::czstring name)
+  {
+    return std::any_of(supported_extensions.begin(),
+                       supported_extensions.end(),
+                       [name](VkExtensionProperties const &property)
+                       { return streq(property.extensionName, name); });
+  };
+
+  return std::all_of(extensions.begin(), extensions.end(), is_extension_supported);
 }

@@ -49,6 +49,22 @@ size_t  string_arr_len  = ...;
 std::vector<std::string>(string_arr, string_arr + string_arr_len);
 ```
 > If you get confused remember a `char**` just points to a `char*` and go from there :) 
+- Lambdas:
+```cpp
+std::vector<std::uint32_t> list;
+
+auto my_lambda = [&list](std::uint32_t n){
+    return n % 2 == 0; 
+};
+```
+- The `[&list]` is the capture clause; *what stuff from the surrounding scope can this lambda access?*
+    - If left empty, lambda cannot take in anything from surroundings
+    - If prefix `list` with `&`, capture as reference 
+    - If prefix `list` with nothing, capture by value; copy is created 
+- The `(std::uint32_t n)` is the argument list; *what arguments can I accept when this lambda is called?*
+- `std::any_of` returns true if any element in given list satisfies a predicate
+- `std::all_of` returns true if all elements in a given list satisfy the predicate
+> When using **sequence operations** like these, we typically have to pass the sequence via its `.begin()` and `.end()`
 
 ### The `Graphics::Graphics` Issue I Died With
 
