@@ -7,6 +7,16 @@
 veng::Graphics::Graphics(gsl::not_null<Window *> window)
     : _window(window)
 {
+// We only want validation info if not in release mode
+#if !defined(NDEBUG)
+  _validation_enabled = true;
+#endif
+
+// MoltenVK requires special flag + extension
+#if defined(__APPLE__)
+  _moltenvk_fix_enabled = true;
+#endif
+
   InitializeVulkan();
 }
 
@@ -22,7 +32,6 @@ void veng::Graphics::InitializeVulkan() { CreateInstance(); }
 
 void veng::Graphics::CreateInstance()
 {
-  // Set info about this app
   VkApplicationInfo app_info;
 
   app_info.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -40,24 +49,20 @@ void veng::Graphics::CreateInstance()
   instance_creation_info.pApplicationInfo  = &app_info;
   instance_creation_info.enabledLayerCount = 0;
 
-  // Add extensions
-  std::vector<gsl::czstring> suggested_extensions = GetSuggestedInstanceExtensions();
+  std::vector<gsl::czstring> required_extensions = GetInstanceExtensions();
 
-  if (!AllExtensionsSupported(suggested_extensions))
+  instance_creation_info.enabledExtensionCount   = required_extensions.size();
+  instance_creation_info.ppEnabledExtensionNames = required_extensions.data();
+
+  if (_moltenvk_fix_enabled)
   {
-    std::exit(EXIT_FAILURE);
+    instance_creation_info.flags =
+        VkInstanceCreateFlagBits::VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
   }
-
-  instance_creation_info.enabledExtensionCount   = suggested_extensions.size();
-  instance_creation_info.ppEnabledExtensionNames = suggested_extensions.data();
-
-// Set flag required by macOS MoltenVK
-#if defined(__APPLE__)
-  instance_creation_info.flags =
-      VkInstanceCreateFlagBits::VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-#else
-  instance_creation_info.flags = nullptr;
-#endif
+  else
+  {
+    instance_creation_info.flags = 0;
+  }
 
   VkResult result = vkCreateInstance(&instance_creation_info, nullptr, &_instance);
 
@@ -67,21 +72,29 @@ void veng::Graphics::CreateInstance()
   }
 }
 
-std::vector<gsl::czstring> veng::Graphics::GetSuggestedInstanceExtensions()
+std::vector<gsl::czstring> veng::Graphics::GetInstanceExtensions()
 {
-  // Get GLFW extensions first
   std::uint32_t  glfw_ext_count(0);
   gsl::czstring *glfw_exts = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
 
   glfw_exts = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
 
-  // Vectorize so we can add more
+  // Vectorize extensions so we can add more manually
   std::vector<gsl::czstring> exts(glfw_exts, glfw_exts + glfw_ext_count);
 
-// Add compatibility required by MoltenVK
-#if defined(__APPLE__)
-  exts.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-#endif
+  if (_moltenvk_fix_enabled)
+  {
+    exts.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+  }
+  if (_validation_enabled)
+  {
+    exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+  }
+
+  if (!AllExtensionsSupported(exts))
+  {
+    std::exit(EXIT_FAILURE);
+  }
 
   return exts;
 }
